@@ -2,18 +2,20 @@
 
 cd -- "$(dirname "$BASH_SOURCE")"
 
+RIME_HOME_DIR=~/Library/Rime
+
 function show_menu() {
 
-  if [[ $PWD = ~/Library/Rime ]]
+  if [[ $PWD = $RIME_HOME_DIR ]]
   then
       echo "================================================"
-      green "您正确安放相关配置文件到 ~/Library/Rime 目录, "
+      green "您正确安放相关配置文件到 ${RIME_HOME_DIR} 目录, "
       green "无需再次运行该脚本，已自动退出脚本"
       echo "================================================"
       exit 1
   else
       echo "================================================"
-      echo "  是否用当前文件夹内容覆盖 \033[31m~/Library/Rime\033[0m 目录？"
+      echo "  是否用当前文件夹内容覆盖 \033[31m${RIME_HOME_DIR}\033[0m 目录？"
       echo "================================================"
   fi
 }
@@ -39,7 +41,7 @@ function echo_result() {
 
   else
     red "${2}\t\t 【 失败 】"
-    echo "请手动移动文件到 ~/Library/Rime 文件夹，再点击状态栏图标，执行布署即可"
+    echo "请手动移动文件到 ${RIME_HOME_DIR} 文件夹，再点击状态栏图标，执行布署即可"
   fi
 }
 
@@ -50,13 +52,13 @@ read choice
 
 case $choice in
 y)
-  if [ ! -d "~/Library/Rime" ];then # 如果不存在 Library/Rime 目录
-    mkdir ~/Library/Rime
+  if [ -d "${RIME_HOME_DIR}" ];then # 如果存在 Library/Rime 目录
+    cp -Rf ${RIME_HOME_DIR}  ~/Desktop/备份的\ Rime\ 文件夹 &&
+    rm -Rf ${RIME_HOME_DIR}
   fi
-  cp -Rf ~/Library/Rime  ~/Desktop/备份的\ Rime\ 文件夹 &&
-  cp -Rf ./* ~/Library/Rime/
+  ln -s $PWD $RIME_HOME_DIR
 
-  echo_result $? "复制文件到 ~/Library/Rime 目录"
+  echo_result $? "创建软链接 $RIME_HOME_DIR --> $PWD"
   ;;
 n)
   echo "================================================"
